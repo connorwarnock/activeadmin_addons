@@ -1,20 +1,16 @@
 language: ruby
 sudo: false
 rvm:
-  - 2.2.6
   - 2.3.3
+  - 2.5.0
 script:
   - cd spec/dummy && RAILS_ENV=test bundle exec rake db:create db:migrate
   - cd ../.. && bundle exec rspec spec
 addons:
   chrome: stable
 before_install:
-  - wget http://chromedriver.storage.googleapis.com/2.32/chromedriver_linux64.zip
-  - unzip chromedriver_linux64.zip
-  - rm chromedriver_linux64.zip
-  - sudo mv -f chromedriver /usr/local/bin/
-  - sudo chmod +x /usr/local/bin/chromedriver
-  - google-chrome-stable --headless --no-sandbox
+  - gem install chromedriver-helper
+  - google-chrome-stable --headless --disable-gpu --no-sandbox --remote-debugging-port=9222 http://localhost &
 deploy:
   provider: rubygems
   api_key:
@@ -23,3 +19,5 @@ deploy:
   on:
     tags: true
     repo: platanus/activeadmin_addons
+before_script:
+  - chromedriver-update 73.0.3683.68
